@@ -10,17 +10,26 @@ var options = {
 };
 var client = mqtt.connect('mqtt://test.mosquitto.org:8081', options);
 
-// preciouschicken.com is the MQTT topic
-client.subscribe('banheirolivre/state');
+client.subscribe('banheirolivre/Banheiro1React');
+client.subscribe('banheirolivre/Banheiro2React');
+
+var banheiro1 = '0';
+var Banheiro2 = '0';
 
 function App() {
   var note;
   client.on('message', function (topic, message) {
     note = message.toString();
+    if (topic === 'banheirolivre/Banheiro1React'){
+      banheiro1 = note;
+    }
+    else {
+      Banheiro2 = note;
+    }
     // Updates React state with message
-    setMesg(note);
-    console.log(note);
-    client.end();
+    setMesg(banheiro1 + Banheiro2);
+    console.log(banheiro1 + Banheiro2 + ' - ' + topic);
+    //client.end();
   });
 
   // Sets default React state
@@ -31,7 +40,7 @@ function App() {
   );
   let result;
   switch (mesg) {
-    case 'falsefalse':
+    case '00':
       result = (
         <>
           <p>banheiro 1 liberado</p>
@@ -39,7 +48,7 @@ function App() {
         </>
       );
       break;
-    case 'truefalse':
+    case '10':
       result = (
         <>
           <p>banheiro 1 ocupado</p>
@@ -47,7 +56,7 @@ function App() {
         </>
       );
       break;
-    case 'falsetrue':
+    case '01':
       result = (
         <>
           <p>banheiro 1 liberado</p>
@@ -55,7 +64,7 @@ function App() {
         </>
       );
       break;
-    case 'truetrue':
+    case '11':
       result = (
         <>
           <p>banheiro 1 ocupado</p>
